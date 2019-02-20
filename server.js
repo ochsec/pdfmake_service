@@ -35,12 +35,13 @@ createPdf = (docData, callback) => {
     // doc.end()
     doc.pipe(fs.createWriteStream('./pdfs/test.pdf'))
     doc.end()
+    callback('success')
 }
 
 app.post('/pdfmake', (req, res) => {
     var docData = req.body
     createPdf(docData, (result) => {
-        res.contentType('application/pdf')
+        //res.contentType('application/pdf')
         res.send(result)
     }, (err) => res.render('index.ejs', { data: err }) )    
 })
