@@ -3,9 +3,12 @@ var fs = require('fs')
 var express = require('express')
 var pdfPrinter = require('pdfmake')
 var bodyParser = require('body-parser')
+var cors = require('cors')
+var GUID = require('node-uuid')
 var port = process.env.PORT || 3000;
 
 var app = express()
+app.use(cors())
 app.use(express.static('public'))
 app.use(bodyParser.json({ limit: '10mb' }))
 app.set('view engine', 'ejs')
@@ -24,24 +27,17 @@ createPdf = (docData, callback) => {
 
     var printer = new pdfPrinter(fonts);
     var doc = printer.createPdfKitDocument(docData);
-
-    // var chunks = [];
-    // var result;
-    // doc.on('data', (chunk) => chunks.push(chunk))
-    // doc.on('end', () => {
-    //     result = Buffer.concat(chunks)
-    //     callback('data:application/pdf;base64,' + result.toString('base64'))
-    // })
-    // doc.end()
-    doc.pipe(fs.createWriteStream('./pdfs/test.pdf'))
+    var filename = GUID.v4();
+    
+    doc.pipe(fs.createWriteStream(`./pdfs/${filename}.pdf`))
     doc.end()
-    callback('success')
+    callback(`localhost:3000/pdfs/${filename}.pdf`)
 }
 
 app.post('/pdfmake', (req, res) => {
     var docData = req.body
     createPdf(docData, (result) => {
-        //res.contentType('application/pdf')
+        // res.contentType('application/pdf')
         res.send(result)
     }, (err) => res.render('index.ejs', { data: err }) )    
 })

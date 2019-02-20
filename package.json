@@ -10,8 +10,10 @@
   "license": "MIT",
   "dependencies": {
     "body-parse": "^0.1.0",
+    "cors": "^2.8.5",
     "ejs": "^2.6.1",
     "express": "^4.16.4",
+    "node-uuid": "^1.4.8",
     "pdfmake": "^0.1.53"
   }
 }
